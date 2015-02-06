@@ -26,6 +26,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,7 +54,7 @@ public class MainActivity extends ActionBarActivity
     private Button mButtonCapture;
     private Button mButtonAnalyze;
     private Button mButtonGallery;
-    private String mCurrentPhotoPath;
+    private String mCurrentPhotoPath = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,8 +91,14 @@ public class MainActivity extends ActionBarActivity
 
     private void analyzePicture() {
         if (mCurrentPhotoPath != null) {
-            Intent analyzePhotoIntent = new Intent();
-
+            Log.d("PUA", "analyze photo file: " + mCurrentPhotoPath);
+            Intent analyzePhotoIntent = new Intent(this.getApplicationContext(), AnalyzePhotoActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putString("filePath", mCurrentPhotoPath);
+            analyzePhotoIntent.putExtras(bundle);
+            startActivity(analyzePhotoIntent);
+        } else {
+            Toast.makeText(this, "no photo selected", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -102,7 +109,8 @@ public class MainActivity extends ActionBarActivity
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             setPic();
-        }
+        } else
+            mCurrentPhotoPath = null;
     }
 
     private void setPic() {
